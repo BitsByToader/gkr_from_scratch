@@ -1,27 +1,6 @@
-#![allow(dead_code)]
+use crate::circuits::*;
 
-#[derive(Debug)]
-enum GateType {
-    Input,
-    Adder((usize, usize)),
-    Multiplier((usize, usize)), // The tuple represents indexes in the array of gates in the next layer (seen as out->in)
-}
-
-#[derive(Debug)]
-struct Gate {
-    gate_type: GateType,
-    value: u32,
-}
-
-#[derive(Debug)]
-struct Layer {
-    gates: Vec<Gate>,
-}
-
-#[derive(Debug)]
-struct Circuit {
-    layers: Vec<Layer>,
-}
+mod circuits;
 
 fn main() {
     println!("~~GKR from scratch~~");
