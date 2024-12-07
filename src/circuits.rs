@@ -1,3 +1,5 @@
+use std::ops::IndexMut;
+
 /**
  * This enum variant defines what forms a gate in a circuit can take.
  * The 'input layer' of a gate represents the layer which the gate uses as its inputs.
@@ -5,6 +7,7 @@
  * Similarly, this layer can be the next layer, if the circuit is seen from output to input.
  */
 #[derive(Debug)]
+#[derive(Clone, Copy)]
 pub enum GateType {
     /**
      * This gate holds known, input data, does no computations.
@@ -28,6 +31,7 @@ pub enum GateType {
  * A gate holds a value in the circuit, and depdending on its type, what kind of computation it performs.
  */
 #[derive(Debug)]
+#[derive(Clone, Copy)]
 pub struct Gate {
     pub gate_type: GateType,
     pub value: u32,
@@ -49,4 +53,44 @@ pub struct Layer {
 #[derive(Debug)]
 pub struct Circuit {
     pub layers: Vec<Layer>,
+}
+
+impl Circuit {
+    // TODO: Circuit validation method.
+    // (mostly to check the indexes of the compute gates)
+
+    /**
+     * Returns the copy of the gate, but with its value computed using the input (i.e. previous) layer. 
+     */
+    fn compute_gate(gate: &Gate, input_layer: &Layer) -> Gate {
+        let mut new_gate = gate.clone();
+
+        new_gate.value = match new_gate.gate_type {
+            // Input gate mantains its value since gate doesn't compute anything.
+            GateType::Input => gate.value,
+            
+            GateType::Adder(inputs) => {
+                input_layer.gates[inputs.0].value + input_layer.gates[inputs.1].value
+            },
+            
+            GateType::Multiplier(inputs) => {
+                input_layer.gates[inputs.0].value * input_layer.gates[inputs.1].value
+            },
+        };
+
+        new_gate
+    }
+
+    /**
+     * Computes the values of the gates in the circuit.
+     */
+    pub fn compute_circuit(&mut self) {
+        // Layer 0 is always input Layer, no computations needed, so skip it.
+        for layer_idx in 1..self.layers.len() {
+            for gate_idx in 0..self.layers[layer_idx].gates.len() {
+                let computed_gate = Circuit::compute_gate(&self.layers[layer_idx].gates[gate_idx], &self.layers[layer_idx-1]);
+                *(self.layers[layer_idx].gates.index_mut(gate_idx)) = computed_gate;
+            }
+        }
+    }
 }

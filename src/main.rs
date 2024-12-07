@@ -1,11 +1,13 @@
 use crate::circuits::*;
+use crate::utils::*;
 
 mod circuits;
+mod utils;
 
 fn main() {
     println!("~~GKR from scratch~~");
     
-    let circuit = Circuit {
+    let mut circuit = Circuit {
         layers: vec![
         // Layer 0 - Input Layer
         Layer {
@@ -67,5 +69,12 @@ fn main() {
         ],
     };
     
-    println!("{:?}", circuit)
+    // Print blank (input only) circuit.
+    println!("{:?}", circuit);
+    
+    // Compute circuit gates' values.
+    circuit.compute_circuit();
+    
+    // Print output (last) layer 
+    println!("{:?}", circuit.layers.last().unwrap());
 }
