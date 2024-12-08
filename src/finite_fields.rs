@@ -21,7 +21,7 @@ impl<const P: i64> fmt::Debug for FFInt<P> {
 impl<const P: i64> FFInt<P> {
     pub fn new(val: i64) -> FFInt<P> {
         FFInt::<P> {
-            value: val % P
+            value: val.rem_euclid(P)
         }
     }
 
@@ -36,7 +36,7 @@ impl<const P: i64> ops::Add<FFInt<P>> for FFInt<P> {
 
     fn add(self, rhs: FFInt<P>) -> Self::Output {
         FFInt::<P> {
-            value: (self.value + rhs.value) % P
+            value: (self.value + rhs.value).rem_euclid(P)
         }
     }
 }
@@ -46,7 +46,7 @@ impl<const P: i64> ops::Mul<FFInt<P>> for FFInt<P> {
 
     fn mul(self, rhs: FFInt<P>) -> Self::Output {
         FFInt::<P> {
-            value: (self.value * rhs.value) % P
+            value: (self.value * rhs.value).rem_euclid(P)
         }
     }
 }
@@ -56,7 +56,7 @@ impl<const P: i64> ops::Sub<FFInt<P>> for FFInt<P> {
 
     fn sub(self, rhs: FFInt<P>) -> Self::Output {
         FFInt::<P> {
-            value: (self.value - rhs.value) % P
+            value: (self.value - rhs.value).rem_euclid(P)
         }
     }
 }
@@ -67,7 +67,7 @@ impl<const P: i64> ops::Neg for FFInt<P> {
     // TODO: Possibly broken???
     fn neg(self) -> Self::Output {
         FFInt::<P> {
-            value: (-self.value) % P
+            value: (-self.value).rem_euclid(P)
         }
     }
 }

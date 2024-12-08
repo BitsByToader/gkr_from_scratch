@@ -1,3 +1,5 @@
+use std::ops::Neg;
+
 use crate::circuits::*;
 use crate::finite_fields::*;
 
@@ -81,6 +83,7 @@ fn main() {
     println!("{:?}", circuit.layers.last().unwrap());
 
     // FF basic tests...
-    let i1 = FFInt::<5>::new(-5);
+    let i1 = FFInt::<5>::new(-7);
     println!("{:?}", i1);
+    println!("{:?}", -i1);
 }
