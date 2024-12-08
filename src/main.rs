@@ -1,6 +1,10 @@
 use crate::circuits::*;
+use crate::finite_fields::*;
 
 mod circuits;
+mod finite_fields;
+
+// TODO: Implement proper tests...
 
 fn main() {
     println!("~~GKR from scratch~~");
@@ -75,4 +79,8 @@ fn main() {
     
     // Print output (last) layer 
     println!("{:?}", circuit.layers.last().unwrap());
+
+    // FF basic tests...
+    let i1 = FFInt::<5>::new(-5);
+    println!("{:?}", i1);
 }
