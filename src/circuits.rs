@@ -84,7 +84,7 @@ impl Circuit {
     /**
      * Computes the values of the gates in the circuit.
      */
-    pub fn compute_circuit(&mut self) {
+    pub fn compute(&mut self) {
         // Layer 0 is always input Layer, no computations needed, so skip it.
         for layer_idx in 1..self.layers.len() {
             for gate_idx in 0..self.layers[layer_idx].gates.len() {
