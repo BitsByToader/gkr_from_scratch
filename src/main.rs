@@ -1,5 +1,3 @@
-use std::ops::Neg;
-
 use crate::circuits::*;
 use crate::finite_fields::*;
 
@@ -84,6 +82,12 @@ fn main() {
 
     // FF basic tests...
     let i1 = FFInt::<5>::new(-7);
-    println!("{:?}", i1);
-    println!("{:?}", -i1);
+    println!("i1  = {:?}", i1);
+    println!("-i1 = {:?}", -i1);
+    
+    // FF inverse tests...
+    let i2 = FFInt::<23>::new(7);
+    println!("i2        = {:?}", i2);
+    println!("i2inverse = {:?}", i2.inverse());
+    println!("inverse field axiom: {:?}", i2 * i2.inverse());
 }
