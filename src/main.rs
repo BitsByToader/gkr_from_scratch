@@ -1,8 +1,10 @@
 use crate::circuits::*;
 use crate::finite_fields::*;
+use crate::polynomials::*;
 
 mod circuits;
 mod finite_fields;
+mod polynomials;
 
 // TODO: Implement proper tests...
 
