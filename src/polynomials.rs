@@ -1,10 +1,7 @@
-use std::ops::*;
-
 use crate::finite_fields::*;
 
-// TODO: Should this Polynomial struct implement its coefficients as an array or as a vector?
-
 pub struct Polynomial<const P: i64, const COEFF_LEN: usize> {
+    // TODO: Refactor coefficients to Vec?
     pub coefficients: [FFInt<P>; COEFF_LEN]
 }
 
