@@ -1,10 +1,13 @@
 use crate::circuits::*;
 use crate::finite_fields::*;
-use crate::polynomials::*;
+use crate::polynomials::polynomial::*;
+use crate::polynomials::polynomial_term::*;
+use crate::zero_knowledge::sum_check::*;
 
 mod circuits;
 mod finite_fields;
 mod polynomials;
+mod zero_knowledge;
 
 // TODO: Implement proper tests...
 
@@ -74,13 +77,13 @@ fn main() {
     };
     
     // Print blank (input only) circuit.
-    println!("{:?}", circuit);
+    println!("{:#?}", circuit);
     
     // Compute circuit gates' values.
     circuit.compute();
     
     // Print output (last) layer 
-    println!("{:?}", circuit.layers.last().unwrap());
+    println!("{:#?}", circuit.layers.last().unwrap());
 
     // FF basic tests...
     let i1 = FFInt::<5>::new(-7);
@@ -92,4 +95,24 @@ fn main() {
     println!("i2        = {:?}", i2);
     println!("i2inverse = {:?}", i2.inverse());
     println!("inverse field axiom: {:?}", i2 * i2.inverse());
+    
+    // Polynomials tests...
+    let p = Polynomial::<29, 3> {
+        terms: vec![
+            PolynomialTerm::<29, 3> {
+                coefficient: FFInt::<29>::new(2),
+                powers: [3, 0, 0]
+            },
+            PolynomialTerm::<29, 3> {
+                coefficient: FFInt::<29>::new(1),
+                powers: [1, 0, 1]
+            },
+            PolynomialTerm::<29, 3> {
+                coefficient: FFInt::<29>::new(1),
+                powers: [0, 1, 1]
+            }
+        ]
+    };
+    println!("Polynomial used: {:#?}", p);
+    println!("Sum-check sum for polynomial: {:?}", sum_check(&p));
 }

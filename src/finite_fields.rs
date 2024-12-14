@@ -6,6 +6,7 @@ use std::fmt;
  * Contains the value of the integer, bounded by P.
  */
 #[derive(Clone, Copy)]
+#[derive(PartialEq, Eq)]
  pub struct FFInt<const P: i64> {
     pub value: i64
 }
@@ -38,10 +39,7 @@ impl<const P: i64> FFInt<P> {
             return (1, 0, a);
         }
 
-        let mut x1 = 0;
-        let mut x2 = 1;
-        let mut y1 = 1;
-        let mut y2 = 0;
+        let (mut x1, mut x2, mut y1, mut y2) = (0, 1, 1, 0);
 
         while b.abs() > 0 {
             let (q, r) = (a/b, a.rem_euclid(b));
