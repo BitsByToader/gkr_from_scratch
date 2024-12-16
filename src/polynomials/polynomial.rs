@@ -2,6 +2,13 @@ use std::ops::Neg;
 
 use crate::{polynomials::polynomial_term::*, FFInt};
 
+// TODO: Pretty printing using display.
+
+// TODO: Constructor using polynomial with higher VAR_COUNT
+//      (also include where to place the old variables).
+
+// TODO: Implement polynomial multiplication.
+
 /**
  * Multi-variate polynomial.
  */
@@ -27,7 +34,7 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
             for (idx, var) in point.iter().enumerate() {
                 match term.powers[idx] {
                     0 => {
-                        // Variable raised to power of 0 gets canceled in multiplication.
+                        // Variable raised to power of 0 gets ignored in multiplication.
                         continue;
                     }
                     other => {
@@ -36,6 +43,7 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
                             term_value = term_value * (*var);
                         }
                     }
+                    // TODO: Negative powers?
                 }
             }
 
@@ -43,6 +51,31 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
         }
 
         res
+    }
+
+    pub fn partial_eval(&self, var_start: usize, point: &[FFInt<P>]) -> Self {
+        let mut out = self.clone();
+
+        for term in out.terms.iter_mut() {
+            for (idx, var) in point.iter().enumerate() {
+                match term.powers[var_start + idx] {
+                    0 => {
+                        // Variable raised to power of 0 gets ignored in multiplication.
+                        continue;
+                    }
+                    other => {
+                        // Raise variable to its power via repeated multiplications.
+                        for _ in 0..other {
+                            term.coefficient = term.coefficient * (*var);
+                        }
+                        term.powers[var_start + idx] = 0; // Cancel out the evaluated variable.
+                    }
+                    // TODO: Negative powers?
+                }
+            }
+        }
+
+        out
     }
 }
 
@@ -64,19 +97,22 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Add for Polynomial<P, VAR_C
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
+        // Start with lhs.
         let mut out = self.clone();
 
+        // 
         'rhs_loop: for rhs_term in rhs.terms.iter() {
             
             for lhs_term in out.terms.iter_mut() {
                 if arr_eq::<i64, VAR_COUNT>(&lhs_term.powers, &rhs_term.powers) {
                     lhs_term.coefficient = lhs_term.coefficient + rhs_term.coefficient;
                     
-                    // If a match in powers was found, skip to next term to add.
+                    // If a match in powers was found, skip to next term.
                     continue 'rhs_loop;      
                 }
             }
             
+            // Match in powers not found, add term to lhs.
             out.terms.push(rhs_term.clone());
         }
 

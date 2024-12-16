@@ -114,5 +114,5 @@ fn main() {
         ]
     };
     println!("Polynomial used: {:#?}", p);
-    println!("Sum-check sum for polynomial: {:?}", sum_check(&p));
+    println!("Sum-check sum for polynomial: {:?}", p.sum_check());
 }

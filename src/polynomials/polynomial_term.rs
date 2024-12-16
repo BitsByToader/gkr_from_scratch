@@ -1,5 +1,7 @@
 use crate::finite_fields::*;
 
+// TODO: Pretty printing using display.
+
 /**
  * Describes the term of a polynomial.
  */
