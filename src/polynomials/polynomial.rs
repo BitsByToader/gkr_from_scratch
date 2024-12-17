@@ -1,4 +1,4 @@
-use std::ops::Neg;
+use std::{ops::Neg, usize};
 
 use crate::{polynomials::polynomial_term::*, FFInt};
 
@@ -53,12 +53,19 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
         res
     }
 
-    pub fn partial_eval(&self, var_start: usize, point: &[FFInt<P>]) -> Self {
+    // TODO: Refactor with slices.
+    pub fn partial_eval(&self, var_start: usize, point: &[FFInt<P>; VAR_COUNT], len: usize) -> Self {
         let mut out = self.clone();
 
+        // sanity checks
+        if (len == 0) || (var_start+len > VAR_COUNT) {
+            // TODO: Return an Option here.
+            return out;
+        }
+
         for term in out.terms.iter_mut() {
-            for (idx, var) in point.iter().enumerate() {
-                match term.powers[var_start + idx] {
+            for idx in var_start..(var_start+len) {
+                match term.powers[idx] {
                     0 => {
                         // Variable raised to power of 0 gets ignored in multiplication.
                         continue;
@@ -66,9 +73,9 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
                     other => {
                         // Raise variable to its power via repeated multiplications.
                         for _ in 0..other {
-                            term.coefficient = term.coefficient * (*var);
+                            term.coefficient = term.coefficient * point[idx];
                         }
-                        term.powers[var_start + idx] = 0; // Cancel out the evaluated variable.
+                        term.powers[idx] = 0; // Cancel out the evaluated variable.
                     }
                     // TODO: Negative powers?
                 }

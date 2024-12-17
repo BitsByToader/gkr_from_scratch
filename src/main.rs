@@ -97,22 +97,40 @@ fn main() {
     println!("inverse field axiom: {:?}", i2 * i2.inverse());
     
     // Polynomials tests...
-    let p = Polynomial::<29, 3> {
+    let p = Polynomial::<211, 3> {
         terms: vec![
-            PolynomialTerm::<29, 3> {
-                coefficient: FFInt::<29>::new(2),
+            PolynomialTerm::<211, 3> {
+                coefficient: FFInt::<211>::new(2),
                 powers: [3, 0, 0]
             },
-            PolynomialTerm::<29, 3> {
-                coefficient: FFInt::<29>::new(1),
+            PolynomialTerm::<211, 3> {
+                coefficient: FFInt::<211>::new(1),
                 powers: [1, 0, 1]
             },
-            PolynomialTerm::<29, 3> {
-                coefficient: FFInt::<29>::new(1),
+            PolynomialTerm::<211, 3> {
+                coefficient: FFInt::<211>::new(1),
                 powers: [0, 1, 1]
             }
         ]
     };
     println!("Polynomial used: {:#?}", p);
+    
+    // SUM-CHECK PROTOCOL EXAMPLE EXECUTION
     println!("Sum-check sum for polynomial: {:?}", p.sum_check());
+    let mut verifier = [FFInt::<211>::new(0);3];
+
+    let iter1 = Polynomial::<211, 3>::sum_check_iter(&p, &verifier, 1);
+    println!("Iteration1 polynomial: {:#?}", iter1);
+
+    verifier[0] = FFInt::<211>::new(2);
+    let iter2 = Polynomial::<211, 3>::sum_check_iter(&p, &verifier, 2);
+    println!("Iteration2 polynomial: {:#?}", iter2);
+
+    verifier[1] = FFInt::<211>::new(3);
+    let iter3 = Polynomial::<211, 3>::sum_check_iter(&p, &verifier, 3);
+    println!("Iteration3 polynomial: {:#?}", iter3);
+
+    let check1 = iter3.eval(&[FFInt::<211>::new(0),FFInt::<211>::new(0), FFInt::<211>::new(6)]);
+    let check2 = p.eval(&[FFInt::<211>::new(2),FFInt::<211>::new(3), FFInt::<211>::new(6)]);
+    println!("Final check: {:?} == {:?}", check1, check2);
 }

@@ -28,29 +28,32 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
     }
 
     pub fn sum_check_iter(
-        p: Polynomial<P, VAR_COUNT>,
-        verifier_inputs: &[FFInt<P>],
-        iter: usize
+        p: &Polynomial<P, VAR_COUNT>,
+        verifier_inputs: &[FFInt<P>; VAR_COUNT],
+        iter: usize // starts from 1 (as in round 1, similarly to the manuscript)
     ) -> Self {
-        let mut out = Polynomial::<P, VAR_COUNT>::new();
-        
-        let mut variables: [FFInt<P>; VAR_COUNT] = [FFInt::<P>::new(0); VAR_COUNT];
-        for idx in 0..(iter-1) {
-            variables[idx] = verifier_inputs[idx];            
-        }
+        // Initial evaluation with known inputs from verifier.
+        let p = p.partial_eval(0, verifier_inputs, iter-1);
+        let mut out = Self::new();
 
+        let mut variables: [FFInt<P>; VAR_COUNT] = [FFInt::<P>::new(0); VAR_COUNT];
+        // TODO: Use slices.
+        for idx in 0..(iter-1) {
+            variables[idx] = verifier_inputs[idx];
+        }
+        
         // TODO: FINISH AND CHECK ME.
         let mut combination: i64 = 0;
 
-        while combination <= ((1 << (VAR_COUNT-iter-1)) - 1) {
+        while combination <= ((1 << (VAR_COUNT-iter)) - 1) {
             let mut curr_combination = combination;
 
-            for idx in (iter+1)..VAR_COUNT {
+            for idx in iter..VAR_COUNT {
                 variables[idx] = FFInt::<P>::new(curr_combination & 1);
                 curr_combination >>= 1;
             }
 
-            out = out + p.partial_eval(iter+1, &variables);
+            out = out + p.partial_eval(iter, &variables, VAR_COUNT-iter);
 
             combination += 1;
         }
@@ -59,10 +62,3 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
         out
     }
 }
-
-// TODO: Implement sum_check iteration function.
-// Arguments:
-//  - partially evaluated polynomial on which the protocol is run over.
-//  - iteration of the protocol.
-// Returns:
-//  - The univariate polynomial after the sum check of some of the variables.
