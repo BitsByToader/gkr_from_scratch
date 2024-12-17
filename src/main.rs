@@ -2,7 +2,6 @@ use crate::circuits::*;
 use crate::finite_fields::*;
 use crate::polynomials::polynomial::*;
 use crate::polynomials::polynomial_term::*;
-use crate::zero_knowledge::sum_check::*;
 
 mod circuits;
 mod finite_fields;
