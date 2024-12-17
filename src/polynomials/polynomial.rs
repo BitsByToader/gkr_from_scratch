@@ -7,8 +7,6 @@ use crate::{polynomials::polynomial_term::*, FFInt};
 // TODO: Constructor using polynomial with higher VAR_COUNT
 //      (also include where to place the old variables).
 
-// TODO: Implement polynomial multiplication.
-
 /**
  * Multi-variate polynomial.
  */
@@ -146,5 +144,30 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Sub for Polynomial<P, VAR_C
 
     fn sub(self, rhs: Self) -> Self::Output {
         self + rhs.neg() // self - rhs
+    }
+}
+
+impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul for Polynomial<P, VAR_COUNT> {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        let mut out = Self::new();
+
+        for lhs_term in self.terms.iter() {
+            for rhs_term in rhs.terms.iter() {
+                let mut new_term = PolynomialTerm::<P, VAR_COUNT> {
+                    coefficient: (lhs_term.coefficient * rhs_term.coefficient),
+                    powers: [0; VAR_COUNT]
+                };
+                
+                for idx in 0..VAR_COUNT {
+                    new_term.powers[idx] = lhs_term.powers[idx] + rhs_term.powers[idx];
+                }
+
+                out.terms.push(new_term);
+            }
+        }
+
+        out
     }
 }
