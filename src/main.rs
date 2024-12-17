@@ -84,17 +84,25 @@ fn main() {
     // Print output (last) layer 
     println!("{:#?}", circuit.layers.last().unwrap());
 
+    println!();
+    println!();
+
     // FF basic tests...
     let i1 = FFInt::<5>::new(-7);
     println!("i1  = {:?}", i1);
     println!("-i1 = {:?}", -i1);
     
+    println!();
+
     // FF inverse tests...
     let i2 = FFInt::<23>::new(7);
     println!("i2        = {:?}", i2);
     println!("i2inverse = {:?}", i2.inverse());
     println!("inverse field axiom: {:?}", i2 * i2.inverse());
     
+    println!();
+    println!();
+
     // Polynomials tests...
     let p = Polynomial::<211, 3> {
         terms: vec![
@@ -132,4 +140,22 @@ fn main() {
     let check1 = iter3.eval(&[FFInt::<211>::new(0),FFInt::<211>::new(0), FFInt::<211>::new(6)]);
     let check2 = p.eval(&[FFInt::<211>::new(2),FFInt::<211>::new(3), FFInt::<211>::new(6)]);
     println!("Final check: {:?} == {:?}", check1, check2);
+
+    println!();
+    println!();
+
+    // Multi Linear Extensions
+    let evaluations = vec![
+        FFInt::<5>::new(1),
+        FFInt::<5>::new(2),
+        FFInt::<5>::new(1),
+        FFInt::<5>::new(4),
+    ];
+    let extension = zero_knowledge::mle::mle_using_evaluations::<5, 2>(&evaluations);
+
+    for i in 0..5 {
+        for j in 0..5 {
+            println!("Evaluation({i},{j})={:?}", extension.eval(&[FFInt::<5>::new(i), FFInt::<5>::new(j)]))
+        }
+    }
 }

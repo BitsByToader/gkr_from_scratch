@@ -147,7 +147,7 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Sub for Polynomial<P, VAR_C
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul for Polynomial<P, VAR_COUNT> {
+impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul<Self> for Polynomial<P, VAR_COUNT> {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
@@ -166,6 +166,22 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul for Polynomial<P, VAR_C
 
                 out.terms.push(new_term);
             }
+        }
+
+        out
+    }
+}
+
+impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul<FFInt<P>> for Polynomial<P, VAR_COUNT> {
+    type Output = Self;
+
+    fn mul(self, rhs: FFInt<P>) -> Self::Output {
+        let mut out = Self::new();
+
+        for term in self.terms.iter() {
+            let mut term = term.clone();
+            term.coefficient = term.coefficient * rhs;
+            out.terms.push(term);
         }
 
         out
