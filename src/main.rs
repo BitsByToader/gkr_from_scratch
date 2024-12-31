@@ -104,19 +104,19 @@ fn main() {
     println!();
 
     // Polynomials tests...
-    let p = Polynomial::<211, 3> {
+    let p = Polynomial::<211> {
         terms: vec![
-            PolynomialTerm::<211, 3> {
+            PolynomialTerm::<211> {
                 coefficient: FFInt::<211>::new(2),
                 powers: vec![3, 0, 0]
             },
-            PolynomialTerm::<211, 3> {
+            PolynomialTerm::<211> {
                 coefficient: FFInt::<211>::new(1),
-                powers: [1, 0, 1]
+                powers: vec![1, 0, 1]
             },
-            PolynomialTerm::<211, 3> {
+            PolynomialTerm::<211> {
                 coefficient: FFInt::<211>::new(1),
-                powers: [0, 1, 1]
+                powers: vec![0, 1, 1]
             }
         ]
     };
@@ -125,21 +125,21 @@ fn main() {
     // SUM-CHECK PROTOCOL EXAMPLE EXECUTION
     // TODO: This 'test' should also check (print) the degree of each variable of interest.
     println!("Sum-check sum for polynomial: {:?}", p.sum_check());
-    let mut verifier = [FFInt::<211>::new(0);3];
+    let mut verifier = vec![FFInt::<211>::new(0);3];
 
-    let iter1 = Polynomial::<211, 3>::sum_check_iter(&p, &verifier, 1);
+    let iter1 = Polynomial::<211>::sum_check_iter(&p, &verifier, 1);
     println!("Iteration1 polynomial: {:#?}", iter1);
 
     verifier[0] = FFInt::<211>::new(2);
-    let iter2 = Polynomial::<211, 3>::sum_check_iter(&p, &verifier, 2);
+    let iter2 = Polynomial::<211>::sum_check_iter(&p, &verifier, 2);
     println!("Iteration2 polynomial: {:#?}", iter2);
 
     verifier[1] = FFInt::<211>::new(3);
-    let iter3 = Polynomial::<211, 3>::sum_check_iter(&p, &verifier, 3);
+    let iter3 = Polynomial::<211>::sum_check_iter(&p, &verifier, 3);
     println!("Iteration3 polynomial: {:#?}", iter3);
 
-    let check1 = iter3.eval(&[FFInt::<211>::new(0),FFInt::<211>::new(0), FFInt::<211>::new(6)]);
-    let check2 = p.eval(&[FFInt::<211>::new(2),FFInt::<211>::new(3), FFInt::<211>::new(6)]);
+    let check1 = iter3.eval(&vec![FFInt::<211>::new(0),FFInt::<211>::new(0), FFInt::<211>::new(6)]);
+    let check2 = p.eval(&vec![FFInt::<211>::new(2),FFInt::<211>::new(3), FFInt::<211>::new(6)]);
     println!("Final check: {:?} == {:?}", check1, check2);
 
     println!();
@@ -152,11 +152,11 @@ fn main() {
         FFInt::<5>::new(1),
         FFInt::<5>::new(4),
     ];
-    let extension = zero_knowledge::mle::mle_using_evaluations::<5, 2>(&evaluations);
+    let extension = zero_knowledge::mle::mle_using_evaluations::<5>(&evaluations, 2);
 
     for i in 0..5 {
         for j in 0..5 {
-            println!("Evaluation({i},{j})={:?}", extension.eval(&[FFInt::<5>::new(i), FFInt::<5>::new(j)]))
+            println!("Evaluation({i},{j})={:?}", extension.eval(&vec![FFInt::<5>::new(i), FFInt::<5>::new(j)]))
         }
     }
 }

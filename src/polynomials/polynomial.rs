@@ -7,23 +7,29 @@ use crate::{polynomials::polynomial_term::*, FFInt};
 // TODO: Constructor using polynomial with higher VAR_COUNT
 //      (also include where to place the old variables).
 
+// TODO: Make fields private.
+
 /**
  * Multi-variate polynomial.
  */
 #[derive(Debug)]
 #[derive(Clone)]
-pub struct Polynomial<const P: i64, const VAR_COUNT: usize> {
-    pub terms: Vec<PolynomialTerm<P, VAR_COUNT>>
+pub struct Polynomial<const P: i64> {
+    pub terms: Vec<PolynomialTerm<P>>
 }
 
-impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
-    pub fn new() -> Polynomial::<P, VAR_COUNT> {
-        Polynomial::<P, VAR_COUNT> {
+impl<const P: i64> Polynomial<P> {
+    pub fn new() -> Polynomial::<P> {
+        Polynomial::<P> {
             terms: vec![]
         }
     }
 
-    pub fn eval(&self, point: &[FFInt<P>; VAR_COUNT]) -> FFInt<P> {
+    // TODO: Check method. Assert that all terms have the same amount of variables (powers vector length).
+    
+    pub fn eval(&self, point: &Vec<FFInt<P>>) -> FFInt<P> {
+        // TODO: assert that point length is the same as powers length
+
         let mut res = FFInt::<P>::new(0);
 
         for term in &self.terms {
@@ -52,11 +58,13 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
     }
 
     // TODO: Refactor with slices.
-    pub fn partial_eval(&self, var_start: usize, point: &[FFInt<P>; VAR_COUNT], len: usize) -> Self {
+    pub fn partial_eval(&self, var_start: usize, point: &Vec<FFInt<P>>, len: usize) -> Self {
         let mut out = self.clone();
 
+        // TODO: assert that point length is the same as powers length
+
         // sanity checks
-        if (len == 0) || (var_start+len > VAR_COUNT) {
+        if (len == 0) || (var_start+len > point.len()) {
             // TODO: Return an Option here.
             return out;
         }
@@ -84,32 +92,34 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Index<usize> for Polynomial<P, VAR_COUNT> {
-    type Output = PolynomialTerm<P, VAR_COUNT>;
+impl<const P: i64> std::ops::Index<usize> for Polynomial<P> {
+    type Output = PolynomialTerm<P>;
 
     fn index(&self, index: usize) -> &Self::Output {
         &self.terms[index]
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::IndexMut<usize> for Polynomial<P, VAR_COUNT> {
+impl<const P: i64> std::ops::IndexMut<usize> for Polynomial<P> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.terms[index]
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Add for Polynomial<P, VAR_COUNT> {
+impl<const P: i64> std::ops::Add for Polynomial<P> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
+        // TODO: Powers size checks.
+
         // Start with lhs.
         let mut out = self.clone();
 
-        // 
+        // Continue with rhs
         'rhs_loop: for rhs_term in rhs.terms.iter() {
             
             for lhs_term in out.terms.iter_mut() {
-                if arr_eq::<i64, VAR_COUNT>(&lhs_term.powers, &rhs_term.powers) {
+                if vec_eq::<i64>(&lhs_term.powers, &rhs_term.powers) {
                     lhs_term.coefficient = lhs_term.coefficient + rhs_term.coefficient;
                     
                     // If a match in powers was found, skip to next term.
@@ -125,7 +135,7 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Add for Polynomial<P, VAR_C
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Neg for Polynomial<P, VAR_COUNT> {
+impl<const P: i64> std::ops::Neg for Polynomial<P> {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
@@ -139,7 +149,7 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Neg for Polynomial<P, VAR_C
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Sub for Polynomial<P, VAR_COUNT> {
+impl<const P: i64> std::ops::Sub for Polynomial<P> {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -147,20 +157,26 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Sub for Polynomial<P, VAR_C
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul<Self> for Polynomial<P, VAR_COUNT> {
+impl<const P: i64> std::ops::Mul<Self> for Polynomial<P> {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
+        // TODO: call rhs check
+        // Assume that self is already checked and has the same amount of powers in all terms.
+        // TODO: Better way?
+        assert_eq!(self.terms[0].powers.len(), self.terms[0].powers.len());
+        let var_count = self.terms[0].powers.len();
+
         let mut out = Self::new();
 
         for lhs_term in self.terms.iter() {
             for rhs_term in rhs.terms.iter() {
-                let mut new_term = PolynomialTerm::<P, VAR_COUNT> {
+                let mut new_term = PolynomialTerm::<P> {
                     coefficient: (lhs_term.coefficient * rhs_term.coefficient),
-                    powers: [0; VAR_COUNT]
+                    powers: vec![0; var_count]
                 };
                 
-                for idx in 0..VAR_COUNT {
+                for idx in 0..var_count {
                     new_term.powers[idx] = lhs_term.powers[idx] + rhs_term.powers[idx];
                 }
 
@@ -172,7 +188,7 @@ impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul<Self> for Polynomial<P,
     }
 }
 
-impl<const P: i64, const VAR_COUNT: usize> std::ops::Mul<FFInt<P>> for Polynomial<P, VAR_COUNT> {
+impl<const P: i64> std::ops::Mul<FFInt<P>> for Polynomial<P> {
     type Output = Self;
 
     fn mul(self, rhs: FFInt<P>) -> Self::Output {

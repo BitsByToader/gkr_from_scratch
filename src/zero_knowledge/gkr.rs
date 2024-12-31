@@ -9,7 +9,7 @@ impl<const P: i64> Circuit<FFInt<P>> {
      * Expects an already computed circuit.
      * The MLE is calculated using the evaluations of the polynomial, i.e. the values of the gates of the layer.
      */
-    fn layer_mle_polynomial(&self, layer_idx: usize) -> Polynomial<P, 1> {
+    fn layer_mle_polynomial(&self, layer_idx: usize) -> Polynomial<P> {
         let mut gate_values: Vec<FFInt<P>> = vec![];
         
         // TODO: Reverse layers array so that output layer has index 0.
@@ -18,18 +18,18 @@ impl<const P: i64> Circuit<FFInt<P>> {
         }
 
         // TODO: change function to use all evaluations instead of 2^VAR_COUNT evaluations.
-        mle_using_evaluations::<P, 1>(&gate_values)
+        mle_using_evaluations::<P>(&gate_values, 1)
     }
 
     /**
      * Returns the multilayer extension of the add polynomial of layer 'layer_idx'.
      * Expects an already computed circuit.
      */
-    fn mult_mle_polynomial(&self, layer_idx: usize) -> Polynomial<P,3> {
+    fn mult_mle_polynomial(&self, layer_idx: usize) -> Polynomial<P> {
         let mut evaluations: Vec<FFInt<P>> = vec![FFInt::<P>::new(0); 3];
         
         // TODO: ???
         
-        mle_using_evaluations::<P, 3>(&evaluations)
+        mle_using_evaluations::<P>(&evaluations, 3)
     }
 }
