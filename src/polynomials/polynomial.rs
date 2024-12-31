@@ -2,12 +2,12 @@ use std::{ops::Neg, usize};
 
 use crate::{polynomials::polynomial_term::*, FFInt};
 
+// TODO: Make the polynomial generic.
+
 // TODO: Pretty printing using display.
 
-// TODO: Constructor using polynomial with higher VAR_COUNT
-//      (also include where to place the old variables).
-
 // TODO: Make fields private.
+// TODO: Write constructor(s).
 
 /**
  * Multi-variate polynomial.

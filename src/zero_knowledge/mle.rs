@@ -1,7 +1,13 @@
 use crate::{finite_fields::*, PolynomialTerm};
 use crate::polynomials::polynomial::*;
 
+/**
+ * Returns the basis polynomial for a polynomial of v variables and a given point w. 
+ */
 pub fn basis_polynomial<const P: i64>(point: &Vec<FFInt<P>>, v: usize) -> Polynomial<P> {
+    assert_eq!(point.len(), v);
+    
+    // Start computation with polynomial = 1.
     let mut out = Polynomial::<P> {
         terms: vec![
             PolynomialTerm::<P> {
@@ -39,10 +45,12 @@ pub fn mle_using_evaluations<const P: i64>(evaluations: &Vec<FFInt<P>>, v: usize
     let mut out = Polynomial::<P>::new();
     let mut combination: i64 = 0;
 
+    // Go over all boolean hypercube values.
     while combination <= ((1 << v) - 1) {
         let mut variables: Vec<FFInt<P>> = vec![FFInt::<P>::new(0); v];
         let mut curr_combination = combination;
 
+        // Int to bit vector.
         for idx in 0..v {
             variables[idx] = FFInt::<P>::new(curr_combination & 1);
             curr_combination >>= 1;
