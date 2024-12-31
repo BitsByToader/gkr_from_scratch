@@ -36,15 +36,13 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
         let p = p.partial_eval(0, verifier_inputs, iter-1);
         let mut out = Self::new();
 
-        let mut variables: [FFInt<P>; VAR_COUNT] = [FFInt::<P>::new(0); VAR_COUNT];
         // TODO: Use slices.
+        let mut variables: [FFInt<P>; VAR_COUNT] = [FFInt::<P>::new(0); VAR_COUNT];
         for idx in 0..(iter-1) {
             variables[idx] = verifier_inputs[idx];
         }
         
-        // TODO: FINISH AND CHECK ME.
         let mut combination: i64 = 0;
-
         while combination <= ((1 << (VAR_COUNT-iter)) - 1) {
             let mut curr_combination = combination;
 
@@ -57,7 +55,6 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
 
             combination += 1;
         }
-        //
 
         out
     }

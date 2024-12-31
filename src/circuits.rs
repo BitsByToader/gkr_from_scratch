@@ -32,17 +32,17 @@ pub enum GateType {
  */
 #[derive(Debug)]
 #[derive(Clone, Copy)]
-pub struct Gate {
+pub struct Gate<T: std::ops::Add<Output=T> + std::ops::Mul<Output=T> + Clone + Copy> {
     pub gate_type: GateType,
-    pub value: u32,
+    pub value: T,
 }
 
 /**
  * A layers holds multiple gates in the circuit which sit on the same level.
  */
 #[derive(Debug)]
-pub struct Layer {
-    pub gates: Vec<Gate>,
+pub struct Layer<T: std::ops::Add<Output=T> + std::ops::Mul<Output=T> + Clone + Copy> {
+    pub gates: Vec<Gate<T>>,
 }
 
 /**
@@ -51,18 +51,18 @@ pub struct Layer {
  * Gates on any layer can be inputs, if that is their type.
  */
 #[derive(Debug)]
-pub struct Circuit {
-    pub layers: Vec<Layer>,
+pub struct Circuit<T: std::ops::Add<Output=T> + std::ops::Mul<Output=T> + Clone + Copy> {
+    pub layers: Vec<Layer<T>>,
 }
 
-impl Circuit {
+impl<T: std::ops::Add<Output=T> + std::ops::Mul<Output=T> + Clone + Copy> Circuit<T> {
     // TODO: Circuit validation method.
     // (mostly to check the indexes of the compute gates)
 
     /**
      * Returns the copy of the gate, but with its value computed using the input (i.e. previous) layer. 
      */
-    fn compute_gate(gate: &Gate, input_layer: &Layer) -> Gate {
+    fn compute_gate(gate: &Gate<T>, input_layer: &Layer<T>) -> Gate<T> {
         let mut new_gate = gate.clone();
 
         new_gate.value = match new_gate.gate_type {

@@ -32,6 +32,9 @@ pub fn basis_polynomial<const P: i64, const VAR_COUNT: usize>(point: &[FFInt<P>;
     out
 }
 
+/**
+ * Calculates the multi linear extension of a polynomial described by its evaluations over the VAR_COUNT variate domain.
+ */
 pub fn mle_using_evaluations<const P: i64, const VAR_COUNT: usize>(evaluations: &Vec<FFInt<P>>) -> Polynomial<P, VAR_COUNT> {
     let mut out = Polynomial::<P, VAR_COUNT>::new();
     let mut combination: i64 = 0;

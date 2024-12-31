@@ -12,7 +12,7 @@ use crate::{polynomials::polynomial_term::*, FFInt};
  */
 #[derive(Debug)]
 #[derive(Clone)]
- pub struct Polynomial<const P: i64, const VAR_COUNT: usize> {
+pub struct Polynomial<const P: i64, const VAR_COUNT: usize> {
     pub terms: Vec<PolynomialTerm<P, VAR_COUNT>>
 }
 
@@ -73,7 +73,7 @@ impl<const P: i64, const VAR_COUNT: usize> Polynomial<P, VAR_COUNT> {
                         for _ in 0..other {
                             term.coefficient = term.coefficient * point[idx];
                         }
-                        term.powers[idx] = 0; // Cancel out the evaluated variable.
+                        term.powers[idx] = 0; // Effectively remove the term as it has been evaluated.
                     }
                     // TODO: Negative powers?
                 }

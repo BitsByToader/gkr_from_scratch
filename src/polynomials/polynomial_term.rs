@@ -6,10 +6,10 @@ use crate::finite_fields::*;
  * Describes the term of a polynomial.
  */
 #[derive(Debug)]
-#[derive(Clone, Copy)]
-pub struct PolynomialTerm<const P: i64, const VAR_COUNT: usize> {
+#[derive(Clone)]
+pub struct PolynomialTerm<const P: i64> {
     pub coefficient: FFInt<P>,
-    pub powers: [i64; VAR_COUNT]
+    pub powers: Vec<i64>
 }
 
 pub fn arr_eq<T: std::cmp::Eq, const SIZE: usize>(arr1: &[T; SIZE], arr2: &[T; SIZE]) -> bool {

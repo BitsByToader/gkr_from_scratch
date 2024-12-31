@@ -108,7 +108,7 @@ fn main() {
         terms: vec![
             PolynomialTerm::<211, 3> {
                 coefficient: FFInt::<211>::new(2),
-                powers: [3, 0, 0]
+                powers: vec![3, 0, 0]
             },
             PolynomialTerm::<211, 3> {
                 coefficient: FFInt::<211>::new(1),
@@ -123,6 +123,7 @@ fn main() {
     println!("Polynomial used: {:#?}", p);
     
     // SUM-CHECK PROTOCOL EXAMPLE EXECUTION
+    // TODO: This 'test' should also check (print) the degree of each variable of interest.
     println!("Sum-check sum for polynomial: {:?}", p.sum_check());
     let mut verifier = [FFInt::<211>::new(0);3];
 
